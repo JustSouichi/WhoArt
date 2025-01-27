@@ -1,4 +1,4 @@
-<h3 align="center"><img src="./logo.png" alt="logo" height="150px"></h3>
+<h3 align="center"><img src="https://raw.githubusercontent.com/JustSouichi/WhoArt/refs/heads/main/logo.png" alt="logo" height="150px"></h3>
 <p align="center">A simple CLI tool to display your GitHub profile as an ASCII art image.</p>
 
 
@@ -20,7 +20,9 @@ When configuring your Git credentials with `git config`, it can often be unclear
 - **Works best in default terminals** such as **macOS Terminal** (xterm - 256 color) and other similar terminal environments.
 - ASCII art rendering and colors may not appear correctly in terminals with limited color support.
 
-![WhoArt](./banner.png)  <!-- Replace with the correct image path -->
+
+<img src="https://raw.githubusercontent.com/JustSouichi/WhoArt/refs/heads/main/banner.png"></img>
+
 
 ## Install
 
