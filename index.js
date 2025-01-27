@@ -2,6 +2,8 @@ import chalk from 'chalk';
 import terminalImage from 'terminal-image';
 import fs from 'fs';
 import os from 'os';
+import { execSync } from 'child_process';
+import fetch from 'node-fetch';
 
 // Funzione per stampare l'intestazione
 function printHeader() {
@@ -10,12 +12,50 @@ function printHeader() {
     console.log(chalk.blue('==========================\n'));
 }
 
-// Funzione per mostrare l'immagine in ASCII art colorata
-async function displayAsciiArt(imagePath) {
+// Funzione per ottenere l'username di GitHub
+function getGitHubUsername() {
     try {
-        // Usa terminal-image per generare l'ASCII art
-        const image = fs.readFileSync(imagePath);
-        const ascii = await terminalImage.buffer(image, { width: 40 }); // Dimensioni personalizzate
+        const username = execSync('git config --global user.name', { encoding: 'utf-8' }).trim();
+        return username || null;
+    } catch (error) {
+        console.error(chalk.red('GitHub username not found. Make sure Git is configured.'));
+        return null;
+    }
+}
+
+// Funzione per ottenere l'URL della foto profilo da GitHub
+async function getGitHubProfileImage(username) {
+    if (!username) {
+        console.error(chalk.red('GitHub username is missing.'));
+        return null;
+    }
+
+    try {
+        const response = await fetch(`https://api.github.com/users/${username}`);
+        if (response.ok) {
+            const data = await response.json();
+            return data.avatar_url || null; // Restituisce l'URL dell'immagine profilo
+        } else {
+            console.error(chalk.red(`GitHub API request failed: ${response.statusText}`));
+            return null;
+        }
+    } catch (error) {
+        console.error(chalk.red('Error fetching GitHub profile image:'), error.message);
+        return null;
+    }
+}
+
+// Funzione per mostrare l'immagine in ASCII art colorata
+async function displayAsciiArtFromUrl(imageUrl) {
+    try {
+        if (!imageUrl) {
+            console.error(chalk.red('No image URL provided.'));
+            return;
+        }
+
+        const response = await fetch(imageUrl);
+        const buffer = await response.buffer();
+        const ascii = await terminalImage.buffer(buffer, { width: 40 }); // Dimensioni personalizzate
         console.log(chalk.cyan(ascii)); // Mostra l'immagine in ciano
     } catch (error) {
         console.error(chalk.red('Error displaying the image:'), error.message);
@@ -34,7 +74,15 @@ function printSystemInfo() {
 // Main Function
 (async () => {
     printHeader();
-    await displayAsciiArt('./whoart_avatar.png'); // Percorso immagine
+
+    const githubUsername = getGitHubUsername();
+    if (githubUsername) {
+        console.log(chalk.green(`GitHub Username: ${githubUsername}`));
+    }
+
+    const profileImageUrl = await getGitHubProfileImage(githubUsername);
+    await displayAsciiArtFromUrl(profileImageUrl);
+
     console.log();
     printSystemInfo();
 })();
