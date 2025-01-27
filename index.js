@@ -12,35 +12,60 @@ function printHeader() {
     console.log(chalk.blue('==========================\n'));
 }
 
-// Funzione per ottenere l'username di GitHub
-function getGitHubUsername() {
+// Funzione per ottenere l'username GitHub o l'email configurata con Git
+function getGitHubUsernameOrEmail() {
     try {
         const username = execSync('git config --global user.name', { encoding: 'utf-8' }).trim();
-        return username || null;
-    } catch (error) {
-        console.error(chalk.red('GitHub username not found. Make sure Git is configured.'));
-        return null;
+        if (username) return { username, type: 'username' };
+    } catch {
+        console.warn(chalk.yellow('GitHub username not found.'));
     }
+
+    try {
+        const email = execSync('git config --global user.email', { encoding: 'utf-8' }).trim();
+        if (email) return { email, type: 'email' };
+    } catch {
+        console.error(chalk.red('GitHub email not found. Make sure Git is configured.'));
+    }
+
+    return null;
 }
 
-// Funzione per ottenere l'URL della foto profilo da GitHub
-async function getGitHubProfileImage(username) {
-    if (!username) {
-        console.error(chalk.red('GitHub username is missing.'));
+// Funzione per convertire l'email in un possibile username (estrapolando la parte prima di "@")
+function convertEmailToUsername(email) {
+    if (email && email.includes('@')) {
+        return email.split('@')[0];
+    }
+    return null;
+}
+
+// Funzione per ottenere i dettagli dell'utente GitHub
+async function getGitHubUserInfo(identifier, type) {
+    if (!identifier) {
+        console.error(chalk.red('GitHub username or email is missing.'));
         return null;
     }
+
+    const username = type === 'email' ? convertEmailToUsername(identifier) : identifier;
 
     try {
         const response = await fetch(`https://api.github.com/users/${username}`);
         if (response.ok) {
             const data = await response.json();
-            return data.avatar_url || null; // Restituisce l'URL dell'immagine profilo
+            return {
+                name: data.name,
+                username: data.login,
+                bio: data.bio,
+                publicRepos: data.public_repos,
+                followers: data.followers,
+                avatar_url: data.avatar_url
+            };
         } else {
             console.error(chalk.red(`GitHub API request failed: ${response.statusText}`));
             return null;
         }
     } catch (error) {
-        console.error(chalk.red('Error fetching GitHub profile image:'), error.message);
+        console.error(chalk.red('Error fetching GitHub user info:'), error.message);
         return null;
     }
 }
@@ -62,27 +87,32 @@ async function displayAsciiArtFromUrl(imageUrl) {
     }
 }
 
-// Funzione per stampare informazioni di sistema
-function printSystemInfo() {
-    console.log(chalk.yellow('OS:      ') + chalk.white(`${os.type()} ${os.release()}`));
-    console.log(chalk.yellow('CPU:     ') + chalk.white(os.cpus()[0].model));
-    console.log(chalk.yellow('Memory:  ') + chalk.white(`${Math.round(os.freemem() / 1024 / 1024)} MB Free`));
-    console.log(chalk.yellow('Uptime:  ') + chalk.white(`${Math.round(os.uptime() / 60)} minutes`));
-    console.log();
+// Funzione per stampare le informazioni dell'utente di GitHub
+function printGitHubUserInfo(userInfo) {
+    if (userInfo) {
+        console.log(chalk.yellow('Name:      ') + chalk.white(userInfo.name || 'Not provided'));
+        console.log(chalk.yellow('Username:  ') + chalk.white(userInfo.username));
+        console.log(chalk.yellow('Bio:       ') + chalk.white(userInfo.bio || 'No bio available'));
+        console.log(chalk.yellow('Public Repos: ') + chalk.white(userInfo.publicRepos));
+        console.log(chalk.yellow('Followers: ') + chalk.white(userInfo.followers));
+        console.log();
+    }
 }
 
 // Main Function
 (async () => {
     printHeader();
 
-    const githubUsername = getGitHubUsername();
-    if (githubUsername) {
-        console.log(chalk.green(`GitHub Username: ${githubUsername}`));
+    const userInfo = getGitHubUsernameOrEmail();
+    if (userInfo) {
+        console.log(chalk.green(`GitHub ${userInfo.type === 'username' ? 'Username' : 'Email'}: ${userInfo[userInfo.type]}`));
     }
 
-    const profileImageUrl = await getGitHubProfileImage(githubUsername);
+    const githubUserDetails = await getGitHubUserInfo(userInfo?.[userInfo.type], userInfo?.type);
+    printGitHubUserInfo(githubUserDetails);
+
+    const profileImageUrl = githubUserDetails?.avatar_url;
     await displayAsciiArtFromUrl(profileImageUrl);
 
     console.log();
-    printSystemInfo();
 })();
