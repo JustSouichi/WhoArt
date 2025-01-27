@@ -3,7 +3,7 @@
 
 
 <p align="center">
-<a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+<a href="https://raw.githubusercontent.com/JustSouichi/WhoArt/refs/heads/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 <a href="https://img.shields.io/github/stars/JustSouichi/WhoArt?style=social"><img src="https://img.shields.io/github/stars/JustSouichi/WhoArt?style=social"></img></a>
 <a href="https://github.com/JustSouichi/WhoArt/releases"><img src="https://img.shields.io/github/release/JustSouichi/WhoArt.svg"></a>
 <a href="https://repology.org/metapackage/whoart"><img src="https://repology.org/badge/tiny-repos/whoart.svg" alt="Packaging status"></a>
@@ -67,4 +67,4 @@ Profile URL: https://github.com/JustSouichi
 
 ## License
 
-MIT License. See the [LICENSE](./LICENSE) file for more details.
+MIT License. See the [LICENSE](https://raw.githubusercontent.com/JustSouichi/WhoArt/refs/heads/main/LICENSE) file for more details.
