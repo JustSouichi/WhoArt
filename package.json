@@ -1,6 +1,6 @@
 {
   "name": "whoart",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A simple CLI tool to display your GitHub profile as an ASCII art image.",
   "main": "index.js",
   "type": "module",
