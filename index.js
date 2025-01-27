@@ -57,7 +57,9 @@ async function getGitHubUserInfo(identifier, type) {
                 bio: data.bio,
                 publicRepos: data.public_repos,
                 followers: data.followers,
-                avatar_url: data.avatar_url
+                avatar_url: data.avatar_url,
+                gists: data.public_gists,  // Nuovo dato
+                profile_url: data.html_url  // Link al profilo GitHub
             };
         } else {
             console.error(chalk.red(`GitHub API request failed: ${response.statusText}`));
@@ -101,6 +103,8 @@ ${chalk.hex('#FFD700')('GitHub Username:')} ${chalk.white(userInfo.username)}
 ${chalk.hex('#FFD700')('Bio:')} ${chalk.white(userInfo.bio || 'No bio available')}
 ${chalk.hex('#FFD700')('Public Repos:')} ${chalk.white(userInfo.publicRepos)}
 ${chalk.hex('#FFD700')('Followers:')} ${chalk.white(userInfo.followers)}
+${chalk.hex('#FFD700')('Public Gists:')} ${chalk.white(userInfo.gists)}
+${chalk.hex('#FFD700')('Profile URL:')} ${chalk.white(userInfo.profile_url)}
 `;
     }
     return '';
