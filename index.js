@@ -79,8 +79,8 @@ async function displayAsciiArtFromUrl(imageUrl) {
         }
 
         const response = await fetch(imageUrl);
-        const buffer = await response.buffer();
-        const ascii = await terminalImage.buffer(buffer, { width: 40 }); // Dimensioni personalizzate
+        const buffer = await response.arrayBuffer(); // Usa arrayBuffer invece di buffer
+        const ascii = await terminalImage.buffer(Buffer.from(buffer), { width: 40 }); // Convertiamo arrayBuffer in Buffer
         console.log(chalk.cyan(ascii)); // Mostra l'immagine in ciano
     } catch (error) {
         console.error(chalk.red('Error displaying the image:'), error.message);
