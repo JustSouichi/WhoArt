@@ -1,8 +1,10 @@
 <h3 align="center"><img src="./logo.png" alt="logo" height="150px"></h3>
 <p align="center">A simple CLI tool to display your GitHub profile as an ASCII art image.</p>
 
+
 <p align="center">
 <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+<a href="https://img.shields.io/github/stars/JustSouichi/WhoArt?style=social"><img src="https://img.shields.io/github/stars/JustSouichi/WhoArt?style=social"></img></a>
 <a href="https://github.com/JustSouichi/WhoArt/releases"><img src="https://img.shields.io/github/release/JustSouichi/WhoArt.svg"></a>
 <a href="https://repology.org/metapackage/whoart"><img src="https://repology.org/badge/tiny-repos/whoart.svg" alt="Packaging status"></a>
 </p>

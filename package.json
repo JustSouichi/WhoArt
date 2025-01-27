@@ -1,19 +1,19 @@
 {
   "name": "whoart",
   "version": "1.0.0",
+  "description": "A simple CLI tool to display your GitHub profile as an ASCII art image.",
   "main": "index.js",
-  "type": "module",
+  "bin": {
+    "whoart": "./index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["GitHub", "CLI", "ASCII", "GitHub profile"],
+  "author": "https://github.com/JustSouichi",
   "license": "MIT",
-  "description": "",
   "dependencies": {
     "chalk": "^5.4.1",
-    "gradient-string": "^3.0.0",
-    "jimp": "^1.6.0",
     "node-fetch": "^3.3.2",
     "terminal-image": "^3.1.1"
   }
