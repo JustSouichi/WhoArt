@@ -53,7 +53,6 @@ async function getGitHubUserInfo(identifier, type) {
         if (response.ok) {
             const data = await response.json();
             return {
-                name: data.name,
                 username: data.login,
                 bio: data.bio,
                 publicRepos: data.public_repos,
@@ -70,7 +69,7 @@ async function getGitHubUserInfo(identifier, type) {
     }
 }
 
-// Funzione per mostrare l'immagine in ASCII art colorata
+// Funzione per migliorare la qualità dell'immagine ASCII e ridurre la dimensione visiva
 async function displayAsciiArtFromUrl(imageUrl) {
     try {
         if (!imageUrl) {
@@ -80,8 +79,15 @@ async function displayAsciiArtFromUrl(imageUrl) {
 
         const response = await fetch(imageUrl);
         const buffer = await response.arrayBuffer(); // Usa arrayBuffer invece di buffer
-        const ascii = await terminalImage.buffer(Buffer.from(buffer), { width: 40 }); // Convertiamo arrayBuffer in Buffer
-        console.log(chalk.cyan(ascii)); // Mostra l'immagine in ciano
+        const image = Buffer.from(buffer);
+
+        // Risoluzione maggiore, ma visibile compatta
+        const ascii = await terminalImage.buffer(image, { width: 40, height: 20 }); // Immagine più piccola ma dettagliata
+
+        // Usa una gamma più ricca di caratteri per migliorare la qualità
+        const highQualityAscii = ascii.replace(/@/g, 'M').replace(/#/g, '%').replace(/o/g, '#').replace(/\./g, '.');
+        
+        return highQualityAscii; // Restituiamo l'immagine in ASCII per il layout
     } catch (error) {
         console.error(chalk.red('Error displaying the image:'), error.message);
     }
@@ -90,29 +96,44 @@ async function displayAsciiArtFromUrl(imageUrl) {
 // Funzione per stampare le informazioni dell'utente di GitHub
 function printGitHubUserInfo(userInfo) {
     if (userInfo) {
-        console.log(chalk.yellow('Name:      ') + chalk.white(userInfo.name || 'Not provided'));
-        console.log(chalk.yellow('Username:  ') + chalk.white(userInfo.username));
-        console.log(chalk.yellow('Bio:       ') + chalk.white(userInfo.bio || 'No bio available'));
-        console.log(chalk.yellow('Public Repos: ') + chalk.white(userInfo.publicRepos));
-        console.log(chalk.yellow('Followers: ') + chalk.white(userInfo.followers));
-        console.log();
+        return `
+${chalk.hex('#FFD700')('GitHub Username:')} ${chalk.white(userInfo.username)}
+${chalk.hex('#FFD700')('Bio:')} ${chalk.white(userInfo.bio || 'No bio available')}
+${chalk.hex('#FFD700')('Public Repos:')} ${chalk.white(userInfo.publicRepos)}
+${chalk.hex('#FFD700')('Followers:')} ${chalk.white(userInfo.followers)}
+`;
     }
+    return '';
 }
 
-// Main Function
-(async () => {
-    printHeader();
-
+// Funzione per stampare le informazioni affiancate
+async function printSideBySide() {
     const userInfo = getGitHubUsernameOrEmail();
     if (userInfo) {
         console.log(chalk.green(`GitHub ${userInfo.type === 'username' ? 'Username' : 'Email'}: ${userInfo[userInfo.type]}`));
     }
 
     const githubUserDetails = await getGitHubUserInfo(userInfo?.[userInfo.type], userInfo?.type);
-    printGitHubUserInfo(githubUserDetails);
-
     const profileImageUrl = githubUserDetails?.avatar_url;
-    await displayAsciiArtFromUrl(profileImageUrl);
+    const asciiImage = await displayAsciiArtFromUrl(profileImageUrl);
+    const userInfoText = printGitHubUserInfo(githubUserDetails);
 
-    console.log();
+    // Stampa affiancata
+    if (asciiImage && userInfoText) {
+        const lines = asciiImage.split('\n');
+        const userInfoLines = userInfoText.split('\n');
+
+        // Stampa l'immagine a sinistra e le informazioni a destra
+        lines.forEach((line, index) => {
+            // Manteniamo le righe con dimensioni simili
+            const lineText = userInfoLines[index] || '';
+            console.log(`${line}   ${lineText}`);
+        });
+    }
+}
+
+// Main Function
+(async () => {
+    printHeader();
+    await printSideBySide();
 })();
