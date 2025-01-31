@@ -65,6 +65,8 @@ Public Gists: 0
 Profile URL: https://github.com/JustSouichi
 ```
 
+**Do you want to contribute?** Go to [GitHub](https://github.com/JustSouichi/WhoArt) and start contributing!
+
 ## License
 
 MIT License. See the [LICENSE](https://raw.githubusercontent.com/JustSouichi/WhoArt/refs/heads/main/LICENSE) file for more details.
